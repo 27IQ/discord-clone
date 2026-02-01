@@ -1,0 +1,19 @@
+package de.minus27IQ.discord_clone;
+
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
+
+import lombok.Getter;
+import lombok.Setter;
+
+@Configuration
+@EnableConfigurationProperties
+@ConfigurationProperties(prefix = "spring")
+@Getter
+@Setter
+public class YAMLConfig {
+
+    private String name;
+    private String environment;
+}

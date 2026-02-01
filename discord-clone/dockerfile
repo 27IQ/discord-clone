@@ -1,0 +1,10 @@
+FROM maven:3.9.9-eclipse-temurin-25 AS build
+WORKDIR /app
+COPY . .
+RUN gradle clean build
+
+
+FROM eclipse-temurin:25-jdk-alpine
+WORKDIR /app
+COPY --from=build /app/build/libs/*.jar spring-backend.jar
+ENTRYPOINT ["java", "-jar", "spring-backend.jar"]

@@ -1,0 +1,54 @@
+spring:
+  config:
+    activate:
+      on-profile: dev
+  name: dev-YAML
+  environment: development
+  datasource:
+    url: jdbc:h2:file:./h2/sep;DB_CLOSE_DELAY=-1
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+  h2:
+    console:
+      enabled: true
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: prod
+  name: prod-YAML
+  environment: production
+  datasource:
+    url: jdbc:postgresql://postgres:5432/sep
+    username: sep
+    password: sep
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: test
+  name: test-YAML
+  environment: testing
+  datasource:
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
