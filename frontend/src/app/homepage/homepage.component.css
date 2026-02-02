@@ -2,5 +2,37 @@ body {
     min-height: 100vh;
     display: grid;
     grid-template-columns: 70px 380px auto;
-    grid-template-rows: 70px auto;
+    grid-template-rows: 70px auto 12vh;
+    grid-template-areas:
+        "home-icon sidebar-2-title page-title"
+        "sidebar sidebar-2 main-page"
+        "user-status user-status main-page";
+}
+
+app-home-icon {
+    grid-area: home-icon;
+}
+
+#main-page {
+    grid-area: main-page;
+}
+
+app-sidebar-2-title {
+    grid-area: sidebar-2-title;
+}
+
+app-user-status {
+    grid-area: user-status;
+}
+
+app-page-title {
+    grid-area: page-title;
+}
+
+app-sidebar {
+    grid-area: sidebar;
+}
+
+app-sidebar-2 {
+    grid-area: sidebar-2;
 }

@@ -20,9 +20,8 @@ export class LoginComponent {
   serverError = signal<string | null>(null);
 
   form = new FormGroup({
-    email: new FormControl('', {
+    username: new FormControl('', {
       nonNullable: true,
-      validators: [Validators.required, Validators.email],
     }),
     password: new FormControl('', {
       nonNullable: true,
@@ -31,6 +30,7 @@ export class LoginComponent {
   });
 
   async submit() {
+    console.log("submit")
     this.serverError.set(null);
 
     if (this.form.invalid) {
@@ -40,16 +40,15 @@ export class LoginComponent {
 
     this.loading.set(true);
 
-    const { email, password } = this.form.getRawValue();
+    const { username, password } = this.form.getRawValue();
 
-    this.auth.login(new UserLoginDto(email, password)).subscribe({
+    this.auth.login(new UserLoginDto(username, password)).subscribe({
       next: () => {
         this.loading.set(false);
-        this.router.navigateByUrl('/'); // or '/dashboard'
+        this.router.navigateByUrl('/');
       },
       error: (err) => {
         this.loading.set(false);
-        // Adjust to your API’s error shape
         const msg =
           err?.error?.message ??
           err?.message ??

@@ -17,7 +17,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Entity(name = "SEPUser")
+@Entity(name = "AppUser")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Data
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
