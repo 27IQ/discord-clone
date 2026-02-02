@@ -1,1 +1,29 @@
-<p>login works!</p>
+<form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+    <h1>Sign in</h1>
+
+    <label>
+        Email
+        <input type="email" formControlName="email" autocomplete="username" />
+    </label>
+    <div *ngIf="form.controls.email.touched && form.controls.email.invalid">
+        <small *ngIf="form.controls.email.errors?.['required']">Email is required.</small>
+        <small *ngIf="form.controls.email.errors?.['email']">Enter a valid email.</small>
+    </div>
+
+    <label>
+        Password
+        <input type="password" formControlName="password" autocomplete="current-password" />
+    </label>
+    <div *ngIf="form.controls.password.touched && form.controls.password.invalid">
+        <small *ngIf="form.controls.password.errors?.['required']">Password is required.</small>
+        <small *ngIf="form.controls.password.errors?.['minlength']">
+            Password must be at least 8 characters.
+        </small>
+    </div>
+
+    <p *ngIf="serverError() as err" style="color: red;">{{ err }}</p>
+
+    <button type="submit" [disabled]="loading() || form.invalid">
+        {{ loading() ? 'Signing in…' : 'Sign in' }}
+    </button>
+</form>
