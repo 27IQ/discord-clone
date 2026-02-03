@@ -24,11 +24,6 @@ public class UserController {
     private final UserService userService;
     private final AuthenticationManager authenticationManager;
 
-    @GetMapping("/all")
-    public ResponseEntity<?> getAllUsers() {
-        return ResponseEntity.ok(UserResponse.fromUsers(userService.getAllUsers()));
-    }
-
     @PostMapping("/register")
     public void registerUser(@RequestBody User user) {
         userService.addUser(user);
