@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
 import { User } from '../../classes/user';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-user-status',
@@ -10,8 +11,9 @@ import { User } from '../../classes/user';
 })
 export class UserStatusComponent {
 
-  user?: User
+  user!: User
   private readonly auth = inject(AuthService);
+  private readonly router = inject(Router);
 
   constructor() {
     this.loadCurrentUser()
@@ -25,6 +27,7 @@ export class UserStatusComponent {
       },
       error: (err) => {
         console.error(err)
+        this.router.navigateByUrl('/login');
       }
     })
   }
