@@ -1,8 +1,10 @@
-import { Component, signal } from '@angular/core';
+import { Component, effect, inject, signal } from '@angular/core';
 import { AddGuildButtonComponent } from '../buttons/add-guild-button/add-guild-button.component';
 import { GuildButtonComponent } from '../buttons/guild-button/guild-button.component';
 import { Guild } from '../../classes/guild';
 import { CommonModule } from '@angular/common';
+import { GuildService } from '../../services/guild.service';
+import { SidebarDataService } from '../../services/data-services/sidebar-data.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -11,18 +13,25 @@ import { CommonModule } from '@angular/common';
   styleUrl: './sidebar.component.css'
 })
 export class SidebarComponent {
+
+  private guildService = inject(GuildService)
+  private sideBarDataService = inject(SidebarDataService)
+  guilds = signal<Guild[]>([])
+
   constructor() {
     this.refreshGuilds()
+
+    effect(() => {
+      this.sideBarDataService.refreshGuildButtonsEvent()
+      this.refreshGuilds()
+    })
   }
 
-  guilds = signal<Guild[]>
-    ([
-      new Guild("2345", "Domba"),
-      new Guild("23456", "Penis"),
-      new Guild("234567", "Homo")
-    ])
-
   refreshGuilds() {
-    //TODO implement
+    this.guildService.getCurrentUsersGuilds().subscribe({
+      next: (response) => {
+        this.guilds.set(response as Guild[]);
+      }
+    })
   }
 }

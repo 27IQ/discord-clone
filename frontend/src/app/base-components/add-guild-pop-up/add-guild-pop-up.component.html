@@ -1,0 +1,20 @@
+<div class="w-1/2 h-auto d-surface grid items-center">
+    <form [formGroup]="form" (ngSubmit)="submit()" novalidate class="grid p-8">
+
+        <h1 class="text-xl font-semibold">Create a new Guild!</h1>
+
+        <label class="text-d-muted mt-1 pt-4">
+            Guildname
+            <input class="d-input" formControlName="guildName" />
+        </label>
+
+        <div class="pt-4 grid-cols-2 grid">
+            <button class="d-btn d-btn-primary mr-2" type="submit" [disabled]="loading() || form.invalid">
+                {{ loading() ? 'Creating …' : 'Create' }}
+            </button>
+            <button class="d-btn d-btn-danger ml-2" (click)="close()">
+                {{'Cancel' }}
+            </button>
+        </div>
+    </form>
+</div>

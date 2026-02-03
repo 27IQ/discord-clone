@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { SidebarDataService } from '../../../services/data-services/sidebar-data.service';
 
 @Component({
   selector: 'app-add-guild-button',
@@ -8,4 +9,9 @@ import { Component } from '@angular/core';
 })
 export class AddGuildButtonComponent {
 
+  sideBarDataService = inject(SidebarDataService)
+
+  openAddGuildPopUp() {
+    this.sideBarDataService.updateShowAddGuildPopUp(true)
+  }
 }
