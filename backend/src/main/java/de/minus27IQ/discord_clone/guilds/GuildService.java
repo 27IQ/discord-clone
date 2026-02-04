@@ -23,6 +23,11 @@ public class GuildService {
 
     public UUID createGuild(String guildName) {
 
+        return createGuild(guildName, getUserByAuth());
+    }
+
+    public UUID createGuild(String guildName, User foundingMember) {
+
         var generalTextChannel = Channel.builder()
                 .channelType(TEXT_CHANNEL)
                 .name("General")
@@ -32,8 +37,6 @@ public class GuildService {
                 .channelType(VOICE_CHANNEL)
                 .name("General")
                 .build();
-
-        var foundingMember = getUserByAuth();
 
         var guild = Guild.builder()
                 .foundingMember(foundingMember)
