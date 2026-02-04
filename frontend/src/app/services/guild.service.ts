@@ -18,4 +18,8 @@ export class GuildService {
   createNewGuild(name: string) {
     return this.http.post(`http://localhost:8080/api/guilds/create/${name}`, "", { withCredentials: true })
   }
+
+  getGuildById(id: string) {
+    return this.http.get(`http://localhost:8080/api/guilds/guild/${id}`, { withCredentials: true })
+  }
 }

@@ -1,9 +1,9 @@
+import { Channel } from "./channel"
+import { User } from "./user"
+
 export class Guild {
     id!: string
     name!: string
-
-    constructor(id: string, name: string) {
-        this.id = id
-        this.name = name
-    }
+    channels!: Channel[]
+    members!: User[]
 }

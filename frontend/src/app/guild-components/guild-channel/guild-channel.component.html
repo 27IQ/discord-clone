@@ -1,1 +1,7 @@
-<p>guild-channel works!</p>
+<button class="p-1 w-full d-btn-surface rounded-sm flex items-center">
+    <img *ngIf="channel().channelType == 'VOICE_CHANNEL'" class="h-3.5 mr-2"
+        src="https://www.svgrepo.com/show/513410/speaker.svg">
+    <img *ngIf="channel().channelType == 'TEXT_CHANNEL'" class="h-3.5 mr-2"
+        src="https://www.svgrepo.com/show/535432/hashtag.svg">
+    <p>{{channel().name}}</p>
+</button>

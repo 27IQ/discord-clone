@@ -1,2 +1,4 @@
-<p *ngIf="this.sideBarDataService.isCurrentPage('HOMEPAGE')">dm-panel</p>
-<p *ngIf="this.sideBarDataService.isCurrentPage('GUILD')">guild-channel</p>
+<div class="d-card h-full overflow-y-scroll d-scroll">
+    <p *ngIf="this.sideBarDataService.isCurrentPage('HOMEPAGE')">dm-panel</p>
+    <app-guild-channel-view *ngIf="this.sideBarDataService.isCurrentPage('GUILD')"></app-guild-channel-view>
+</div>
