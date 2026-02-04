@@ -1,5 +1,8 @@
-import { Component, input, computed } from '@angular/core';
+import { Component, input, inject } from '@angular/core';
 import { Guild } from '../../../classes/guild';
+import { SidebarDataService } from '../../../services/data-services/sidebar-data.service';
+import { PageHolder } from '../../../classes/page-holder';
+import { PageView } from '../../../enums/page-view';
 
 @Component({
   selector: 'app-guild-button',
@@ -8,6 +11,11 @@ import { Guild } from '../../../classes/guild';
   styleUrl: './guild-button.component.css',
 })
 export class GuildButtonComponent {
+
+  sideBarDataService = inject(SidebarDataService)
   guild = input.required<Guild>()
-  displayName = computed(() => `${this.guild().name}`)
+
+  changeToGuildView() {
+    this.sideBarDataService.updatePageView(new PageHolder(PageView.GUILD, this.guild().id))
+  }
 }
