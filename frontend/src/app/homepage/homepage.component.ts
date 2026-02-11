@@ -8,6 +8,7 @@ import { UserStatusComponent } from '../base-components/user-status/user-status.
 import { AddGuildPopUpComponent } from '../base-components/add-guild-pop-up/add-guild-pop-up.component';
 import { SidebarDataService } from '../services/data-services/sidebar-data.service';
 import { CommonModule } from '@angular/common';
+import { WebsocketService } from '../services/websocket.service';
 
 @Component({
   selector: 'app-homepage',
@@ -18,5 +19,10 @@ import { CommonModule } from '@angular/common';
 export class HomepageComponent {
 
   sideBarDataService = inject(SidebarDataService)
+  webSocketService = inject(WebsocketService)
+
+  constructor() {
+    this.webSocketService.activate()
+  }
 
 }

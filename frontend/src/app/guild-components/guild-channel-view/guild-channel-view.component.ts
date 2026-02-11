@@ -26,7 +26,7 @@ export class GuildChannelViewComponent {
       next: (response) => {
         this.guild.set(response as Guild)
         this.channels.set(this.guild()!.channels)
-        console.log(`guild ${this.guild.name} has loaded successfully`)
+        console.log(`guild ${this.guild()!.name} has loaded successfully`)
         console.log(this.guild)
       },
       error: (err) => {
