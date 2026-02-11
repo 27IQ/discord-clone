@@ -8,8 +8,6 @@ import java.util.UUID;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import de.minus27IQ.discord_clone.guilds.Guild;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

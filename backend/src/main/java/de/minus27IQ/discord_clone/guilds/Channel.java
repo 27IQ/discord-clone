@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.UUID;
 
 import de.minus27IQ.discord_clone.users.User;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
