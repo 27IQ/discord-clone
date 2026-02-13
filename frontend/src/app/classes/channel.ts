@@ -6,4 +6,5 @@ export class Channel {
     name!: string
     channelType!: ChannelType;
     members!: User[]
+    activeMembers?: User[]
 }

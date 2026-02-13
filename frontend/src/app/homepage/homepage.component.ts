@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { Sidebar2Component } from '../base-components/sidebar-2/sidebar-2.component';
 import { SidebarComponent } from '../base-components/sidebar/sidebar.component';
 import { PageTitleComponent } from '../base-components/page-title/page-title.component';
@@ -8,7 +8,7 @@ import { UserStatusComponent } from '../base-components/user-status/user-status.
 import { AddGuildPopUpComponent } from '../base-components/add-guild-pop-up/add-guild-pop-up.component';
 import { SidebarDataService } from '../services/data-services/sidebar-data.service';
 import { CommonModule } from '@angular/common';
-import { WebsocketService } from '../services/websocket.service';
+import { WebsocketService } from '../services/websocket/websocket.service';
 
 @Component({
   selector: 'app-homepage',
@@ -16,13 +16,16 @@ import { WebsocketService } from '../services/websocket.service';
   templateUrl: './homepage.component.html',
   styleUrl: './homepage.component.css'
 })
-export class HomepageComponent {
+export class HomepageComponent implements OnDestroy, OnInit {
 
   sideBarDataService = inject(SidebarDataService)
   webSocketService = inject(WebsocketService)
 
-  constructor() {
+  ngOnInit(): void {
     this.webSocketService.activate()
   }
 
+  ngOnDestroy(): void {
+    this.webSocketService.deactivate()
+  }
 }

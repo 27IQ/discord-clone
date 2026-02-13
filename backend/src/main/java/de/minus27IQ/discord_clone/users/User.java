@@ -20,6 +20,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Entity(name = "app_user")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -37,6 +38,7 @@ public class User implements UserDetails {
 
     private String password;
 
+    @ToString.Exclude
     @ManyToMany(mappedBy = "members", fetch = FetchType.LAZY)
     private List<Guild> guilds;
 
