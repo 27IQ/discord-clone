@@ -28,6 +28,7 @@ export class GuildChannelComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.channelSubscribtion?.unsubscribe()
+    this.channelSubscribtion = null
   }
 
   joinChannel() {

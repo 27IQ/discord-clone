@@ -5,12 +5,10 @@ import java.util.UUID;
 
 import de.minus27IQ.discord_clone.channels.Channel;
 import de.minus27IQ.discord_clone.channels.ChannelType;
-import de.minus27IQ.discord_clone.users.dto.UserResponse;
 
-public record ChannelResponse(UUID id, String name, ChannelType channelType, List<UserResponse> members) {
+public record ChannelResponse(UUID id, String name, ChannelType channelType) {
     public ChannelResponse(Channel channel) {
-        this(channel.getId(), channel.getName(), channel.getChannelType(),
-                UserResponse.fromUsers(channel.getMembers()));
+        this(channel.getId(), channel.getName(), channel.getChannelType());
     }
 
     public static List<ChannelResponse> fromChannels(List<Channel> channels) {
