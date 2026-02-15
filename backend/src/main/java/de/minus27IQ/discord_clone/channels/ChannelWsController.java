@@ -10,11 +10,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import de.minus27IQ.discord_clone.channels.dto.ChannelResponse;
+import de.minus27IQ.discord_clone.channels.exceptions.ChannelException;
 import de.minus27IQ.discord_clone.websocket.messages.ChannelEvent;
 import de.minus27IQ.discord_clone.websocket.messages.base.BaseEnvelope;
 import de.minus27IQ.discord_clone.websocket.messages.base.Crud;
 import de.minus27IQ.discord_clone.websocket.messages.base.MessageType;
-import io.netty.channel.ChannelException;
 import lombok.RequiredArgsConstructor;
 
 @Controller
