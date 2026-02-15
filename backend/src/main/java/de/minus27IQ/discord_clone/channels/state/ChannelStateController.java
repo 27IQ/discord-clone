@@ -1,4 +1,4 @@
-package de.minus27IQ.discord_clone.channels;
+package de.minus27IQ.discord_clone.channels.state;
 
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -7,10 +7,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 
 import de.minus27IQ.discord_clone.users.User;
-import de.minus27IQ.discord_clone.websocket.messages.VoiceJoinEvent;
-import de.minus27IQ.discord_clone.websocket.messages.VoiceLeaveEvent;
+import de.minus27IQ.discord_clone.websocket.messages.VoiceEvent;
 import de.minus27IQ.discord_clone.websocket.messages.base.BaseEnvelope;
 import de.minus27IQ.discord_clone.websocket.messages.base.MessageType;
+import de.minus27IQ.discord_clone.websocket.messages.base.Status;
 import lombok.RequiredArgsConstructor;
 
 @Controller
@@ -23,14 +23,16 @@ public class ChannelStateController {
     @MessageMapping("/chat")
     public void handle(@Payload BaseEnvelope envelope, Authentication auth) {
         switch (envelope) {
-            case VoiceJoinEvent join:
-                channelStateService.joinChannel(join.channelId(), auth);
-                var event = new VoiceJoinEvent(MessageType.VOICE_JOIN, join.channelId(),
-                        ((User) auth.getPrincipal()).getId());
-                messagingTemplate.convertAndSend("/topic/channel." + join.channelId(), event);
-                break;
-            case @SuppressWarnings("unused") VoiceLeaveEvent leave:
-                channelStateService.leaveChannel(auth);
+            case VoiceEvent join:
+
+                if (join.status() == Status.START) {
+                    channelStateService.joinChannel(join.channelId(), auth);
+                    var event = new VoiceEvent(MessageType.VOICE, Status.START, join.channelId(),
+                            ((User) auth.getPrincipal()).getId());
+                    messagingTemplate.convertAndSend("/topic/channel." + join.channelId(), event);
+                } else {
+                    // TODO implement leave
+                }
                 break;
 
             default:

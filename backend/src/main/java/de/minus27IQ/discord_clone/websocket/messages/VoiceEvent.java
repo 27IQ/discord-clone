@@ -4,12 +4,12 @@ import java.util.UUID;
 
 import de.minus27IQ.discord_clone.websocket.messages.base.BaseEnvelope;
 import de.minus27IQ.discord_clone.websocket.messages.base.MessageType;
+import de.minus27IQ.discord_clone.websocket.messages.base.Status;
 
-public record VoiceLeaveEvent(MessageType type, UUID user) implements BaseEnvelope {
+public record VoiceEvent(MessageType type, Status status, UUID channelId, UUID user) implements BaseEnvelope {
 
     @Override
     public MessageType getType() {
         return type;
     }
-
 }

@@ -1,4 +1,4 @@
-package de.minus27IQ.discord_clone.channels;
+package de.minus27IQ.discord_clone.channels.state;
 
 import java.util.UUID;
 

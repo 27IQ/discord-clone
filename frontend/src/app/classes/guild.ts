@@ -7,3 +7,8 @@ export class Guild {
     channels!: Channel[]
     members!: User[]
 }
+
+export interface GuildSummeryEntry {
+    id: string
+    name: string
+}

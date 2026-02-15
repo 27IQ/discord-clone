@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import de.minus27IQ.discord_clone.guilds.dto.GuildRespone;
+import de.minus27IQ.discord_clone.guilds.dto.GuildSummaryRespone;
 import lombok.RequiredArgsConstructor;
 
 @Controller
@@ -31,13 +31,13 @@ public class GuildController {
     @GetMapping("/guild/{guildId}")
     public ResponseEntity<?> getGuildById(@PathVariable UUID guildId) throws GuildNotFoundException {
         var guild = guildService.getGuildById(guildId);
-        return ResponseEntity.ok(new GuildRespone(guild));
+        return ResponseEntity.ok(new GuildSummaryRespone(guild));
     }
 
     @GetMapping("/myguilds")
     public ResponseEntity<?> getGuildsForCurrentUser() {
         var guilds = guildService.getGuildsForCurrentUser();
-        return ResponseEntity.ok(GuildRespone.fromGuilds(guilds));
+        return ResponseEntity.ok(GuildSummaryRespone.fromGuilds(guilds));
     }
 
 }

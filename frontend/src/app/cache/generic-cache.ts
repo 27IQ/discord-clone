@@ -10,7 +10,7 @@ export class GenericCache<T extends Indentifiable> {
     private cache = new Map<string, T>()
     private operations = new Queue<CacheTransaction<T>>()
     private cacheInit: () => T[]
-    name: string
+    private name: string
     private rebuilding: boolean = false
     private draining: boolean = false
 

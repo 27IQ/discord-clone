@@ -3,8 +3,8 @@ package de.minus27IQ.discord_clone.guilds;
 import java.util.List;
 import java.util.UUID;
 
+import de.minus27IQ.discord_clone.channels.Channel;
 import de.minus27IQ.discord_clone.users.User;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -17,14 +17,16 @@ import jakarta.persistence.OneToMany;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Data
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
+@Setter
+@Getter
 public class Guild {
 
     @Id
@@ -33,7 +35,7 @@ public class Guild {
 
     private String name;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "guild", fetch = FetchType.LAZY)
     private List<Channel> channels;
 
     @ManyToMany(fetch = FetchType.LAZY)

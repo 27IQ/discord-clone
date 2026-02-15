@@ -1,7 +1,7 @@
 import { Component, effect, inject, signal } from '@angular/core';
 import { AddGuildButtonComponent } from '../buttons/add-guild-button/add-guild-button.component';
 import { GuildButtonComponent } from '../buttons/guild-button/guild-button.component';
-import { Guild } from '../../classes/guild';
+import { GuildSummeryEntry } from '../../classes/guild';
 import { CommonModule } from '@angular/common';
 import { GuildService } from '../../services/guild.service';
 import { SidebarDataService } from '../../services/data-services/sidebar-data.service';
@@ -16,7 +16,7 @@ export class SidebarComponent {
 
   private guildService = inject(GuildService)
   private sideBarDataService = inject(SidebarDataService)
-  guilds = signal<Guild[]>([])
+  guilds = signal<GuildSummeryEntry[]>([])
 
   constructor() {
     this.refreshGuilds()
@@ -30,7 +30,7 @@ export class SidebarComponent {
   refreshGuilds() {
     this.guildService.getCurrentUsersGuilds().subscribe({
       next: (response) => {
-        this.guilds.set(response as Guild[]);
+        this.guilds.set(response as GuildSummeryEntry[]);
       }
     })
   }

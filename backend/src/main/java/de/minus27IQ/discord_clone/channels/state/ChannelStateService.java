@@ -1,4 +1,4 @@
-package de.minus27IQ.discord_clone.channels;
+package de.minus27IQ.discord_clone.channels.state;
 
 import static de.minus27IQ.discord_clone.users.UserUtilityHelper.getUserByAuth;
 
@@ -12,7 +12,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
-import de.minus27IQ.discord_clone.channels.exceptions.ChannelException;
+import de.minus27IQ.discord_clone.channels.state.exceptions.ChannelException;
 import de.minus27IQ.discord_clone.users.User;
 import lombok.RequiredArgsConstructor;
 

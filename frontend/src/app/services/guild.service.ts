@@ -22,4 +22,8 @@ export class GuildService {
   getGuildById(id: string) {
     return this.http.get(`http://localhost:8080/api/guilds/guild/${id}`, { withCredentials: true })
   }
+
+  getChannelsByGuildId(id: string) {
+    return this.http.get(`http://localhost:8080/api/channel/guild/${id}`, { withCredentials: true })
+  }
 }

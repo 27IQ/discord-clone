@@ -25,7 +25,7 @@ public class SecurityConfig {
                                                 .requestMatchers("/api/users/all", "/api/users/register",
                                                                 "/api/users/login")
                                                 .permitAll()
-                                                .anyRequest().authenticated())
+                                                .anyRequest().permitAll())
                                 .sessionManagement(session -> session
                                                 .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
                                 .cors(Customizer.withDefaults());

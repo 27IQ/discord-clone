@@ -1,8 +1,15 @@
 package de.minus27IQ.discord_clone.websocket.messages.base;
 
 public enum MessageType {
+    // Channel
+    VOICE,
+    STREAM,
     MESSAGE,
     TYPING,
-    VOICE_JOIN,
-    VOICE_LEAVE;
+    CHANNEL,
+
+    // Guild
+    CHANNEL_ORDER,
+    GUILD;
+
 }

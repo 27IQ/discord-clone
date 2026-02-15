@@ -2,16 +2,17 @@ package de.minus27IQ.discord_clone.guilds;
 
 import lombok.RequiredArgsConstructor;
 
-import static de.minus27IQ.discord_clone.guilds.ChannelType.*;
-
 import java.util.List;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import de.minus27IQ.discord_clone.channels.Channel;
+import de.minus27IQ.discord_clone.channels.ChannelRepository;
 import de.minus27IQ.discord_clone.users.User;
 
+import static de.minus27IQ.discord_clone.channels.ChannelType.*;
 import static de.minus27IQ.discord_clone.users.UserUtilityHelper.getUserByAuth;
 
 @RequiredArgsConstructor
@@ -19,7 +20,7 @@ import static de.minus27IQ.discord_clone.users.UserUtilityHelper.getUserByAuth;
 public class GuildService {
 
     private final GuildRepository guildRepository;
-    // private final ChannelRepository channelRepository;
+    private final ChannelRepository channelRepository;
 
     public UUID createGuild(String guildName) {
 
@@ -27,23 +28,32 @@ public class GuildService {
     }
 
     public UUID createGuild(String guildName, User foundingMember) {
+        var guild = Guild.builder()
+                .foundingMember(foundingMember)
+                .members(List.of(foundingMember))
+                .name(guildName)
+                .build();
+
+        guild = guildRepository.save(guild);
 
         var generalTextChannel = Channel.builder()
                 .channelType(TEXT_CHANNEL)
                 .name("General")
+                // .members(List.of(foundingMember))
+                .guild(guild)
                 .build();
 
         var generalVoiceChannel = Channel.builder()
                 .channelType(VOICE_CHANNEL)
                 .name("General")
+                // .members(List.of(foundingMember))
+                .guild(guild)
                 .build();
 
-        var guild = Guild.builder()
-                .foundingMember(foundingMember)
-                .members(List.of(foundingMember))
-                .channels(List.of(generalTextChannel, generalVoiceChannel))
-                .name(guildName)
-                .build();
+        channelRepository.save(generalTextChannel);
+        channelRepository.save(generalVoiceChannel);
+
+        // guild.setChannels(List.of(generalTextChannel, generalVoiceChannel));
 
         return guildRepository.save(guild).getId();
     }
