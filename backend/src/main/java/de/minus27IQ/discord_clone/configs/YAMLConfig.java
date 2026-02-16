@@ -1,4 +1,4 @@
-package de.minus27IQ.discord_clone;
+package de.minus27IQ.discord_clone.configs;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;

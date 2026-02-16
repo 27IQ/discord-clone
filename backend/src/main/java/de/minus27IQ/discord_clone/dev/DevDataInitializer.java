@@ -1,4 +1,4 @@
-package de.minus27IQ.discord_clone;
+package de.minus27IQ.discord_clone.dev;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
@@ -28,11 +28,18 @@ public class DevDataInitializer {
                     .password(passwordEncoder.encode("12345678"))
                     .build();
 
+            var testo2 = User.builder()
+                    .username("testo2")
+                    .password(passwordEncoder.encode("12345678"))
+                    .build();
+
             testo = userRepository.save(testo);
+            testo2 = userRepository.save(testo2);
 
             System.out.println("Users created");
 
-            guildService.createGuild("foof", testo);
+            var guild = guildService.createGuild("foof", testo);
+            guildService.joinGuild(guild.getId(), testo2);
         };
     }
 }

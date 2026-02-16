@@ -38,7 +38,7 @@ public class Guild {
     @OneToMany(mappedBy = "guild", fetch = FetchType.LAZY)
     private List<Channel> channels;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "guild_members", joinColumns = @JoinColumn(name = "guild_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
     private List<User> members;
 

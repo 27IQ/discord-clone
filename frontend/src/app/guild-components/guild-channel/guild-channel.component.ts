@@ -4,10 +4,13 @@ import { CommonModule } from '@angular/common';
 import { GuildChannelUserPreviewComponent } from '../guild-channel-user-preview/guild-channel-user-preview.component';
 import { WebsocketService } from '../../services/websocket/websocket.service';
 import { StompSubscription } from '@stomp/stompjs';
-import { MessageType } from '../../classes/messages/message-type';
-import { Crud } from '../../classes/messages/crud';
-import { BaseEnvelope } from '../../classes/messages/base-envelope';
-import { ChannelEvent } from '../../classes/messages/channel-event';
+import { ChannelType } from '../../enums/channel-type';
+import { ChannelEvent } from '../../websocket/channel-event';
+import { BaseEnvelope } from '../../websocket/message/base/base-envelope';
+import { MessageType } from '../../websocket/message/base/message-type';
+import { Crud } from '../../websocket/message/base/crud';
+import { VoiceEvent } from '../../websocket/voice-event';
+import { Status } from '../../websocket/message/base/status';
 
 @Component({
   selector: 'app-guild-channel',
@@ -20,22 +23,37 @@ export class GuildChannelComponent implements OnInit, OnDestroy {
   websocketService = inject(WebsocketService)
   channelId = input.required<ChannelIdDTO>()
   channel = signal<Channel>(new Channel())
-  channelSubscribtion: StompSubscription | null = null;
+  userChannelSubscribtion: StompSubscription | null = null;
+  mainChannelSubscribtion: StompSubscription | null = null;
+
+  connected = false
 
   ngOnInit(): void {
     this.prepareChannel()
   }
 
   ngOnDestroy(): void {
-    this.channelSubscribtion?.unsubscribe()
-    this.channelSubscribtion = null
+    this.userChannelSubscribtion?.unsubscribe()
+    this.userChannelSubscribtion = null
+
+    this.mainChannelSubscribtion?.unsubscribe()
+    this.mainChannelSubscribtion = null
   }
 
-  joinChannel() {
+  interact() {
     switch (this.channel().channelType) {
       case ChannelType.VOICE_CHANNEL:
-        //this.websocketService.voiceJoin(this.channel())
-        break;
+        {
+          //TODO this should check the username when receiving channel events to determine the connected variable
+          if (!this.connected) {
+            this.joinChannel()
+            this.connected = true
+          } else {
+            this.leaveChannel()
+            this.connected = false
+          }
+          break;
+        }
       case ChannelType.TEXT_CHANNEL:
         //TODO implement text channels
         break;
@@ -45,9 +63,49 @@ export class GuildChannelComponent implements OnInit, OnDestroy {
     }
   }
 
+  joinChannel() {
+    const msg: VoiceEvent = {
+      type: MessageType.VOICE,
+      status: Status.START,
+      channelId: this.channelId().id,
+    };
+
+    this.websocketService.client.publish({
+      destination: "/app/channel", body: JSON.stringify(msg)
+    })
+  }
+
+  leaveChannel() {
+    const msg: VoiceEvent = {
+      type: MessageType.VOICE,
+      status: Status.END,
+      channelId: this.channelId().id,
+    };
+
+    this.websocketService.client.publish({
+      destination: "/app/channel", body: JSON.stringify(msg)
+    })
+  }
+
   prepareChannel() {
 
-    this.channelSubscribtion = this.websocketService.client.subscribe(`/user/topic/channel.${this.channelId().id}`, (message) => {
+    this.userChannelSubscribtion = this.subscribe("/user/topic/channel")
+    this.mainChannelSubscribtion = this.subscribe("/topic/channel")
+
+    const msg: ChannelEvent = {
+      type: MessageType.CHANNEL,
+      crud: Crud.READ,
+      channelId: this.channelId().id,
+      channel: undefined,
+    };
+
+    this.websocketService.client.publish({
+      destination: "/app/channel", body: JSON.stringify(msg)
+    })
+  }
+
+  subscribe(path: string) {
+    return this.websocketService.client.subscribe(`${path}.${this.channelId().id}`, (message) => {
 
       const envelope = (JSON.parse(message.body) as BaseEnvelope);
 
@@ -65,10 +123,6 @@ export class GuildChannelComponent implements OnInit, OnDestroy {
 
       }
     })
-
-    this.websocketService.client.publish({
-      destination: "/app/channel", body: JSON.stringify(new ChannelEvent(MessageType.CHANNEL, Crud.READ, this.channelId().id))
-    })
   }
 
   handleChannelEvent(event: ChannelEvent) {
@@ -77,6 +131,7 @@ export class GuildChannelComponent implements OnInit, OnDestroy {
         if (!event.channel)
           return
         this.channel.set(event.channel)
+        console.log(this.channel())
         break
 
       case Crud.DELETE:

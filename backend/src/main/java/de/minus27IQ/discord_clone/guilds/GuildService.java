@@ -12,7 +12,7 @@ import de.minus27IQ.discord_clone.channels.Channel;
 import de.minus27IQ.discord_clone.channels.ChannelRepository;
 import de.minus27IQ.discord_clone.users.User;
 
-import static de.minus27IQ.discord_clone.channels.ChannelType.*;
+import static de.minus27IQ.discord_clone.channels.base.ChannelType.*;
 import static de.minus27IQ.discord_clone.users.UserUtilityHelper.getUserByAuth;
 
 @RequiredArgsConstructor
@@ -22,12 +22,12 @@ public class GuildService {
     private final GuildRepository guildRepository;
     private final ChannelRepository channelRepository;
 
-    public UUID createGuild(String guildName) {
+    public Guild createGuild(String guildName) {
 
         return createGuild(guildName, getUserByAuth());
     }
 
-    public UUID createGuild(String guildName, User foundingMember) {
+    public Guild createGuild(String guildName, User foundingMember) {
         var guild = Guild.builder()
                 .foundingMember(foundingMember)
                 .members(List.of(foundingMember))
@@ -55,7 +55,7 @@ public class GuildService {
 
         // guild.setChannels(List.of(generalTextChannel, generalVoiceChannel));
 
-        return guildRepository.save(guild).getId();
+        return guildRepository.save(guild);
     }
 
     public Guild getGuildById(UUID guildId) throws GuildNotFoundException {
@@ -65,6 +65,19 @@ public class GuildService {
             throw new GuildNotFoundException("The guild with UUID: \"" + guildId + "\" was not found.");
 
         return guild.get();
+    }
+
+    public void joinGuild(UUID guildId) {
+        joinGuild(guildId, getUserByAuth());
+    }
+
+    public void joinGuild(UUID guildId, User user) {
+        var guildOp = guildRepository.findById(guildId);
+
+        guildOp.ifPresent((guild) -> {
+            guild.getMembers().add(user);
+            guildRepository.save(guild);
+        });
     }
 
     @Transactional(readOnly = true)

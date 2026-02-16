@@ -1,6 +1,6 @@
 import { ChannelEvent } from './channel-event';
-import { Crud } from './crud';
-import { MessageType } from './message-type';
+import { Crud } from './base/crud';
+import { MessageType } from './base/message-type';
 
 describe('ChannelEvent', () => {
   it('should create an instance', () => {

@@ -1,4 +1,4 @@
-<button (click)="joinChannel()" class="p-1 w-full d-btn-surface rounded-sm ">
+<button (click)="interact()" class="p-1 w-full d-btn-surface rounded-sm ">
     <div class="flex items-center">
         <img *ngIf="channel().channelType == 'VOICE_CHANNEL'" class="h-3.5 mr-2"
             src="https://www.svgrepo.com/show/513410/speaker.svg">
@@ -6,7 +6,9 @@
             src="https://www.svgrepo.com/show/535432/hashtag.svg">
         {{channel().name}}
     </div>
-    <app-guild-channel-user-preview *ngFor="let activeMember of channel().activeMembers"
-        [activeMember]="activeMember"></app-guild-channel-user-preview>
+    <div class="grid">
+        <app-guild-channel-user-preview *ngFor="let activeUser of channel().activeUsers"
+            [activeUser]="activeUser"></app-guild-channel-user-preview>
+    </div>
 
 </button>

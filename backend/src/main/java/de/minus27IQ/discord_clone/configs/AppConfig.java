@@ -1,4 +1,4 @@
-package de.minus27IQ.discord_clone.auth;
+package de.minus27IQ.discord_clone.configs;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

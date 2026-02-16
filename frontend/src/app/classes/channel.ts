@@ -1,17 +1,11 @@
-import { Indentifiable } from "../cache/indentifiable";
 import { ChannelType } from "../enums/channel-type";
 import { User } from "./user";
 
-export class Channel implements Indentifiable {
+export class Channel {
     id!: string
     name!: string
     channelType!: ChannelType;
-    members!: User[]
-    activeMembers?: User[]
-
-    getId(): string {
-        return this.id;
-    }
+    activeUsers!: User[]
 }
 
 export interface ChannelIdDTO {

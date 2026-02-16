@@ -23,9 +23,9 @@ public class GuildController {
 
     @PostMapping("/create/{name}")
     public ResponseEntity<?> createGuild(@PathVariable String name) throws URISyntaxException {
-        var guildId = guildService.createGuild(name);
+        Guild guild = guildService.createGuild(name);
         // TODO make uri dynamic (not localhost)
-        return ResponseEntity.created(new URI("http://localhost:8080/api/guilds/guild/" + guildId)).build();
+        return ResponseEntity.created(new URI("http://localhost:8080/api/guilds/guild/" + guild.getId())).build();
     }
 
     @GetMapping("/guild/{guildId}")

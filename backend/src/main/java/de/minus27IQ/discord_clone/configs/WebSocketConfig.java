@@ -1,4 +1,4 @@
-package de.minus27IQ.discord_clone.websocket;
+package de.minus27IQ.discord_clone.configs;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;

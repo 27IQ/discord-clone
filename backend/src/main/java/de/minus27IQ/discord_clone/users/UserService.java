@@ -5,6 +5,9 @@ import org.springframework.stereotype.Service;
 
 import static de.minus27IQ.discord_clone.users.UserUtilityHelper.getUserByAuth;
 
+import java.util.List;
+import java.util.UUID;
+
 import lombok.RequiredArgsConstructor;
 
 @Service

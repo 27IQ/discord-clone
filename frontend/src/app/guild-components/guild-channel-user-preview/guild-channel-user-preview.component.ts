@@ -8,5 +8,5 @@ import { User } from '../../classes/user';
   styleUrl: './guild-channel-user-preview.component.css',
 })
 export class GuildChannelUserPreviewComponent {
-  activeMember = input.required<User>()
+  activeUser = input.required<User>()
 }
