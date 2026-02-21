@@ -13,7 +13,7 @@ export class ChannelService {
     return this.http.get(`http://localhost:8080/api/channel/getAll`, { withCredentials: true })
   }*/
 
-  getChannelOfGuild(id: string) {
+  getChannelOfGuild() {
     return this.http.get(`http://localhost:8080/api/channel/getAll`, { withCredentials: true })
   }
 }

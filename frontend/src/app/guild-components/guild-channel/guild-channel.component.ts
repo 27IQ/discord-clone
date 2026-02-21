@@ -1,16 +1,8 @@
-import { Component, inject, input, OnDestroy, OnInit, signal } from '@angular/core';
-import { Channel, ChannelIdDTO } from '../../classes/channel';
+import { Component, effect, inject, input, Signal } from '@angular/core';
+import { ChannelData, ChannelIdDTO } from '../../classes/channel';
 import { CommonModule } from '@angular/common';
-import { GuildChannelUserPreviewComponent } from '../guild-channel-user-preview/guild-channel-user-preview.component';
-import { WebsocketService } from '../../services/websocket/websocket.service';
-import { StompSubscription } from '@stomp/stompjs';
-import { ChannelType } from '../../enums/channel-type';
-import { ChannelEvent } from '../../websocket/channel-event';
-import { BaseEnvelope } from '../../websocket/message/base/base-envelope';
-import { MessageType } from '../../websocket/message/base/message-type';
-import { Crud } from '../../websocket/message/base/crud';
-import { VoiceEvent } from '../../websocket/voice-event';
-import { Status } from '../../websocket/message/base/status';
+import { GuildChannelUserPreviewComponent } from '../guild-channel-user-preview/guild-channel-user-preview.component';;
+import { ChannelCacheService } from '../../services/cache/channel-cache.service';
 
 @Component({
   selector: 'app-guild-channel',
@@ -18,126 +10,32 @@ import { Status } from '../../websocket/message/base/status';
   templateUrl: './guild-channel.component.html',
   styleUrl: './guild-channel.component.css',
 })
-export class GuildChannelComponent implements OnInit, OnDestroy {
+export class GuildChannelComponent {
 
-  websocketService = inject(WebsocketService)
-  channelId = input.required<ChannelIdDTO>()
-  channel = signal<Channel>(new Channel())
-  userChannelSubscribtion: StompSubscription | null = null;
-  mainChannelSubscribtion: StompSubscription | null = null;
+  channelId = input<ChannelIdDTO>()
+  channelCache = inject(ChannelCacheService)
+  channel: Signal<ChannelData> | undefined
 
-  connected = false
+  constructor() {
+    effect(() => {
+      const id = this.channelId()
+      if (!id) return
 
-  ngOnInit(): void {
-    this.prepareChannel()
-  }
-
-  ngOnDestroy(): void {
-    this.userChannelSubscribtion?.unsubscribe()
-    this.userChannelSubscribtion = null
-
-    this.mainChannelSubscribtion?.unsubscribe()
-    this.mainChannelSubscribtion = null
+      this.channel = this.channelCache.cache.getSignal(id.id)
+    })
   }
 
   interact() {
-    switch (this.channel().channelType) {
-      case ChannelType.VOICE_CHANNEL:
-        {
-          //TODO this should check the username when receiving channel events to determine the connected variable
-          if (!this.connected) {
-            this.joinChannel()
-            this.connected = true
-          } else {
-            this.leaveChannel()
-            this.connected = false
-          }
-          break;
-        }
-      case ChannelType.TEXT_CHANNEL:
-        //TODO implement text channels
-        break;
+    if (this.channelId() === undefined)
+      return
 
-      default:
-        break;
+    const channel = this.channelCache.cache.get(this.channelId()!.id)
+
+    if (!channel) {
+      console.error(`channel not in cache`)
+      return
     }
-  }
 
-  joinChannel() {
-    const msg: VoiceEvent = {
-      type: MessageType.VOICE,
-      status: Status.START,
-      channelId: this.channelId().id,
-    };
-
-    this.websocketService.client.publish({
-      destination: "/app/channel", body: JSON.stringify(msg)
-    })
-  }
-
-  leaveChannel() {
-    const msg: VoiceEvent = {
-      type: MessageType.VOICE,
-      status: Status.END,
-      channelId: this.channelId().id,
-    };
-
-    this.websocketService.client.publish({
-      destination: "/app/channel", body: JSON.stringify(msg)
-    })
-  }
-
-  prepareChannel() {
-
-    this.userChannelSubscribtion = this.subscribe("/user/topic/channel")
-    this.mainChannelSubscribtion = this.subscribe("/topic/channel")
-
-    const msg: ChannelEvent = {
-      type: MessageType.CHANNEL,
-      crud: Crud.READ,
-      channelId: this.channelId().id,
-      channel: undefined,
-    };
-
-    this.websocketService.client.publish({
-      destination: "/app/channel", body: JSON.stringify(msg)
-    })
-  }
-
-  subscribe(path: string) {
-    return this.websocketService.client.subscribe(`${path}.${this.channelId().id}`, (message) => {
-
-      const envelope = (JSON.parse(message.body) as BaseEnvelope);
-
-      switch (envelope.type) {
-        case MessageType.CHANNEL:
-          this.handleChannelEvent(envelope as ChannelEvent)
-          break
-
-        case MessageType.MESSAGE:
-          //TODO implement
-          console.warn("not implemented")
-          break
-
-        default:
-
-      }
-    })
-  }
-
-  handleChannelEvent(event: ChannelEvent) {
-    switch (event.crud) {
-      case Crud.UPDATE:
-        if (!event.channel)
-          return
-        this.channel.set(event.channel)
-        console.log(this.channel())
-        break
-
-      case Crud.DELETE:
-        //TODO implement
-        console.warn("not implemented")
-        break;
-    }
+    channel.interact()
   }
 }

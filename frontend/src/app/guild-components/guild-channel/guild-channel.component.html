@@ -1,4 +1,4 @@
-<button (click)="interact()" class="p-1 w-full d-btn-surface rounded-sm ">
+<button *ngIf="channel!==undefined" (click)="interact()" class="p-1 w-full d-btn-surface rounded-sm ">
     <div class="flex items-center">
         <img *ngIf="channel().channelType == 'VOICE_CHANNEL'" class="h-3.5 mr-2"
             src="https://www.svgrepo.com/show/513410/speaker.svg">

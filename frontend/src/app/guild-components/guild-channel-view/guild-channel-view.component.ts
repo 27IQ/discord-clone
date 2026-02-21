@@ -2,10 +2,11 @@ import { Component, inject, signal } from '@angular/core';
 import { GuildService } from '../../services/guild.service';
 import { SidebarDataService } from '../../services/data-services/sidebar-data.service';
 import { GuildSummeryEntry } from '../../classes/guild';
-import { ChannelIdDTO } from '../../classes/channel';
+import { Channel, ChannelIdDTO } from '../../classes/channel';
 import { GuildChannelComponent } from '../guild-channel/guild-channel.component';
 import { CommonModule } from '@angular/common';
-import { ChannelCacheService } from '../../services/data-services/channel-cache.service';
+import { ChannelCacheService } from '../../services/cache/channel-cache.service';
+import { WebsocketService } from '../../services/websocket/websocket.service';
 
 @Component({
   selector: 'app-guild-channel-view',
@@ -15,12 +16,11 @@ import { ChannelCacheService } from '../../services/data-services/channel-cache.
 })
 export class GuildChannelViewComponent {
   guildService = inject(GuildService)
-  channelCacheService = inject(ChannelCacheService)
   sideBarDataService = inject(SidebarDataService)
   guild = signal<GuildSummeryEntry>({} as GuildSummeryEntry)
-  channelIds = signal<ChannelIdDTO[]>([])
-
-
+  channelCache = inject(ChannelCacheService)
+  websocketService = inject(WebsocketService)
+  channelIds = signal<ChannelIdDTO[] | undefined>(undefined)
 
   constructor() {
     const guildId = this.sideBarDataService.currentPageView().id
@@ -30,8 +30,17 @@ export class GuildChannelViewComponent {
         this.guild.set(response as GuildSummeryEntry)
         this.guildService.getChannelsByGuildId(this.guild().id).subscribe({
           next: (response) => {
-            console.log(response)
             this.channelIds.set(response as ChannelIdDTO[])
+
+            //TODO this is shit
+
+            this.channelIds()!.forEach((channelId) => {
+              try {
+                this.channelCache.cache.register(new Channel(channelId.id, this.websocketService))
+              } catch (error) {
+                console.error(error)
+              }
+            })
           },
           error: (err) => {
             console.error(err)

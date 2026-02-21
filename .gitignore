@@ -34,3 +34,4 @@ build/
 
 .env
 /h2
+/.VSCodeCounter
