@@ -28,16 +28,9 @@ public class GuildController {
         return ResponseEntity.created(new URI("http://localhost:8080/api/guilds/guild/" + guild.getId())).build();
     }
 
-    @GetMapping("/guild/{guildId}")
-    public ResponseEntity<?> getGuildById(@PathVariable UUID guildId) throws GuildNotFoundException {
-        var guild = guildService.getGuildById(guildId);
-        return ResponseEntity.ok(new GuildSummaryRespone(guild));
-    }
-
     @GetMapping("/myguilds")
     public ResponseEntity<?> getGuildsForCurrentUser() {
         var guilds = guildService.getGuildsForCurrentUser();
         return ResponseEntity.ok(GuildSummaryRespone.fromGuilds(guilds));
     }
-
 }

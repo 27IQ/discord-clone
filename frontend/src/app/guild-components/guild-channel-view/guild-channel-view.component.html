@@ -1,6 +1,6 @@
 <div class="grid auto-rows-max">
-    <div *ngIf="channelIds()!==undefined">
-        <app-guild-channel class=" mt-1 mr-1 ml-1" *ngFor="let channelId of channelIds()"
-            [channelId]="channelId"></app-guild-channel>
+    <div *ngIf="true">
+        <app-guild-channel class=" mt-1 mr-1 ml-1" *ngFor="let channel of channels"
+            [channel]="channel"></app-guild-channel>
     </div>
 </div>

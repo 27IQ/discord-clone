@@ -35,7 +35,7 @@ public class Guild {
 
     private String name;
 
-    @OneToMany(mappedBy = "guild", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "guild", fetch = FetchType.EAGER)
     private List<Channel> channels;
 
     @ManyToMany(fetch = FetchType.EAGER)

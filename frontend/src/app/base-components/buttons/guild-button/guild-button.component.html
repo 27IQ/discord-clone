@@ -1,5 +1,5 @@
-<div class="w-full aspect-square flex">
+<div *ngIf="this.guild()().name!==undefined" class="w-full aspect-square flex">
     <button (click)="changeToGuildView()" class=" d-card d-square-btn d-btn-surface w-full grid">
-        <p class="text-3xl place-self-center text-black font-bold">{{this.guild().name.slice(0,1)}}</p>
+        <p class="text-3xl place-self-center text-white font-bold">{{this.guild()().name.slice(0,1)}}</p>
     </button>
 </div>

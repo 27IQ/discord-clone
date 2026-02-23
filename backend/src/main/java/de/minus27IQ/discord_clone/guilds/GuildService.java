@@ -3,6 +3,7 @@ package de.minus27IQ.discord_clone.guilds;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
@@ -58,13 +59,8 @@ public class GuildService {
         return guildRepository.save(guild);
     }
 
-    public Guild getGuildById(UUID guildId) throws GuildNotFoundException {
-        var guild = guildRepository.findById(guildId);
-
-        if (guild.isEmpty())
-            throw new GuildNotFoundException("The guild with UUID: \"" + guildId + "\" was not found.");
-
-        return guild.get();
+    public Optional<Guild> getGuildById(UUID guildId) {
+        return guildRepository.findById(guildId);
     }
 
     public void joinGuild(UUID guildId) {

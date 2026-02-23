@@ -26,6 +26,9 @@ export class HomepageComponent implements OnDestroy, OnInit {
   }
 
   ngOnDestroy(): void {
-    this.webSocketService.deactivate()
+    this.webSocketService.getClient().then((client) => {
+      client.deactivate()
+    })
+
   }
 }

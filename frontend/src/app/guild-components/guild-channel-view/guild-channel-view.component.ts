@@ -1,55 +1,45 @@
-import { Component, inject, signal } from '@angular/core';
-import { GuildService } from '../../services/guild.service';
-import { SidebarDataService } from '../../services/data-services/sidebar-data.service';
-import { GuildSummeryEntry } from '../../classes/guild';
-import { Channel, ChannelIdDTO } from '../../classes/channel';
-import { GuildChannelComponent } from '../guild-channel/guild-channel.component';
-import { CommonModule } from '@angular/common';
-import { ChannelCacheService } from '../../services/cache/channel-cache.service';
-import { WebsocketService } from '../../services/websocket/websocket.service';
+import { Component, inject, OnInit, Signal } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { GuildCacheService } from "../../services/cache/guild-cache.service";
+import { SidebarDataService } from "../../services/data-services/sidebar-data.service";
+import { ChannelData } from "../../classes/channel";
+import { ChannelCacheService } from "../../services/cache/channel-cache.service";
+import { GuildChannelComponent } from "../guild-channel/guild-channel.component";
+
 
 @Component({
   selector: 'app-guild-channel-view',
+  standalone: true,
   imports: [GuildChannelComponent, CommonModule],
   templateUrl: './guild-channel-view.component.html',
   styleUrl: './guild-channel-view.component.css',
 })
-export class GuildChannelViewComponent {
-  guildService = inject(GuildService)
-  sideBarDataService = inject(SidebarDataService)
-  guild = signal<GuildSummeryEntry>({} as GuildSummeryEntry)
-  channelCache = inject(ChannelCacheService)
-  websocketService = inject(WebsocketService)
-  channelIds = signal<ChannelIdDTO[] | undefined>(undefined)
+export class GuildChannelViewComponent implements OnInit {
+  sideBarDataService = inject(SidebarDataService);
+  guildCacheService = inject(GuildCacheService);
+  channelCacheService = inject(ChannelCacheService)
 
-  constructor() {
-    const guildId = this.sideBarDataService.currentPageView().id
-    // TODO guildId! scary
-    this.guildService.getGuildById(guildId!).subscribe({
-      next: (response) => {
-        this.guild.set(response as GuildSummeryEntry)
-        this.guildService.getChannelsByGuildId(this.guild().id).subscribe({
-          next: (response) => {
-            this.channelIds.set(response as ChannelIdDTO[])
+  guildId = this.sideBarDataService.currentPageView().id!;
+  channels: Signal<ChannelData>[] = []
 
-            //TODO this is shit
+  async ngOnInit(): Promise<void> {
 
-            this.channelIds()!.forEach((channelId) => {
-              try {
-                this.channelCache.cache.register(new Channel(channelId.id, this.websocketService))
-              } catch (error) {
-                console.error(error)
-              }
-            })
-          },
-          error: (err) => {
-            console.error(err)
-          }
-        })
-      },
-      error: (err) => {
-        console.error(err);
-      }
-    })
+    const guildCache = await this.guildCacheService.getCache()
+    const guild = guildCache.getSignal(this.guildId)
+
+    if (!guild) {
+      console.error("guild is undefined")
+      return
+    }
+
+    const channelIds = guild().channels
+
+    const channelCache = await this.channelCacheService.getCache()
+
+    const out = channelIds
+      .map((id) => channelCache.getSignal(id.id))
+      .filter((signal) => signal !== undefined)
+
+    this.channels = out
   }
 }

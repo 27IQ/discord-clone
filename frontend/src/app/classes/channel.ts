@@ -1,37 +1,37 @@
 import { StompSubscription } from "@stomp/stompjs";
 import { ChannelType } from "../enums/channel-type";
-import { ChannelEvent } from "../websocket/channel-event";
 import { BaseEnvelope } from "../websocket/message/base/base-envelope";
 import { Crud } from "../websocket/message/base/crud";
 import { MessageType } from "../websocket/message/base/message-type";
 import { Status } from "../websocket/message/base/status";
-import { VoiceEvent } from "../websocket/voice-event";
 import { User } from "./user";
 import { Signal, signal } from "@angular/core";
 import { WebsocketService } from "../services/websocket/websocket.service";
 import { ReactiveData } from "../services/cache/base/reactive-data";
+import { VoiceEvent } from "../websocket/message/voice-event";
+import { ChannelEvent } from "../websocket/message/channel-event";
 
 export class Channel implements ReactiveData<ChannelData> {
-    private channel = signal<ChannelData>({} as ChannelData)
+    private data = signal<ChannelData>({} as ChannelData)
     private userChannelSubscribtion: StompSubscription | undefined = undefined;
     private mainChannelSubscribtion: StompSubscription | undefined = undefined;
 
     connected = false
 
     constructor(id: string, private websocketService: WebsocketService) {
-        this.channel.set({ id: id } as ChannelData)
+        this.data.set({ id: id } as ChannelData)
     }
 
-    public initialise(): void {
-        this.prepareChannel(this.channel().id)
+    public async initialise(): Promise<void> {
+        await this.prepareChannel(this.data().id)
     }
 
     public getData(): Signal<ChannelData> {
-        return this.channel
+        return this.data
     }
 
     public getId(): string {
-        return this.channel().id
+        return this.data().id
     }
 
     public dispose(): void {
@@ -43,7 +43,7 @@ export class Channel implements ReactiveData<ChannelData> {
     }
 
     public interact() {
-        switch (this.channel().channelType) {
+        switch (this.data().channelType) {
             case ChannelType.VOICE_CHANNEL:
                 {
                     //TODO this should check the username when receiving channel events to determine the connected variable
@@ -61,7 +61,7 @@ export class Channel implements ReactiveData<ChannelData> {
                 break;
 
             default:
-                break;
+                console.error("unknown channeltype")
         }
     }
 
@@ -69,11 +69,13 @@ export class Channel implements ReactiveData<ChannelData> {
         const msg: VoiceEvent = {
             type: MessageType.VOICE,
             status: Status.START,
-            channelId: this.channel().id,
+            channelId: this.data().id,
         };
 
-        this.websocketService.client.publish({
-            destination: "/app/channel", body: JSON.stringify(msg)
+        this.websocketService.getClient().then((client) => {
+            client.publish({
+                destination: "/app/channel", body: JSON.stringify(msg)
+            })
         })
     }
 
@@ -81,18 +83,20 @@ export class Channel implements ReactiveData<ChannelData> {
         const msg: VoiceEvent = {
             type: MessageType.VOICE,
             status: Status.END,
-            channelId: this.channel().id,
+            channelId: this.data().id,
         };
 
-        this.websocketService.client.publish({
-            destination: "/app/channel", body: JSON.stringify(msg)
+        this.websocketService.getClient().then((client) => {
+            client.publish({
+                destination: "/app/channel", body: JSON.stringify(msg)
+            })
         })
     }
 
-    private prepareChannel(id: string) {
+    private async prepareChannel(id: string) {
 
-        this.userChannelSubscribtion = this.subscribe(`/user/topic/channel.${id}`)
-        this.mainChannelSubscribtion = this.subscribe(`/topic/channel.${id}`)
+        this.userChannelSubscribtion = await this.subscribe(`/user/topic/channel.${id}`)
+        this.mainChannelSubscribtion = await this.subscribe(`/topic/channel.${id}`)
 
         const msg: ChannelEvent = {
             type: MessageType.CHANNEL,
@@ -101,13 +105,18 @@ export class Channel implements ReactiveData<ChannelData> {
             channel: undefined,
         };
 
-        this.websocketService.client.publish({
-            destination: "/app/channel", body: JSON.stringify(msg)
+        this.websocketService.getClient().then((client) => {
+            client.publish({
+                destination: "/app/channel", body: JSON.stringify(msg)
+            })
         })
     }
 
-    private subscribe(path: string) {
-        return this.websocketService.client.subscribe(path, (message) => {
+    private async subscribe(path: string): Promise<StompSubscription> {
+
+        const client = await this.websocketService.getClient()
+
+        return client.subscribe(path, (message) => {
 
             const envelope = (JSON.parse(message.body) as BaseEnvelope);
 
@@ -122,7 +131,7 @@ export class Channel implements ReactiveData<ChannelData> {
                     break
 
                 default:
-
+                    console.error(`messagetype could not be matched: ${message.body}`)
             }
         })
     }
@@ -132,25 +141,27 @@ export class Channel implements ReactiveData<ChannelData> {
             case Crud.UPDATE:
                 if (!event.channel)
                     return
-                this.channel.set(event.channel)
-                console.log(this.channel())
+                this.data.set(event.channel)
+                console.log(this.data())
                 break
 
             case Crud.DELETE:
                 //TODO implement
                 console.warn("not implemented")
                 break;
+
+            default:
+                console.error(`ChannelEventType could not be matched: ${event}`)
         }
     }
 }
 
-export interface ChannelData {
+export interface ChannelIdDTO {
     id: string
+}
+
+export interface ChannelData extends ChannelIdDTO {
     name: string
     channelType: ChannelType;
     activeUsers: User[]
-}
-
-export interface ChannelIdDTO {
-    id: string
 }

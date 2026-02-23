@@ -24,6 +24,7 @@ export class SidebarDataService {
   public currentPageView = this._currentPageView.asReadonly()
 
   updatePageView(pageHolder: PageHolder) {
+    console.log(`changing current view to ${pageHolder.type}:${pageHolder.id}`)
     this._currentPageView.set(pageHolder)
   }
 

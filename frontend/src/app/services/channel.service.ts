@@ -7,13 +7,8 @@ import { inject, Injectable } from '@angular/core';
 export class ChannelService {
   private http = inject(HttpClient)
 
-
   //TODO change localhost
-  /*getCurrentUsersChannels() {
-    return this.http.get(`http://localhost:8080/api/channel/getAll`, { withCredentials: true })
-  }*/
-
-  getChannelOfGuild() {
+  getCurrentUsersChannels() {
     return this.http.get(`http://localhost:8080/api/channel/getAll`, { withCredentials: true })
   }
 }

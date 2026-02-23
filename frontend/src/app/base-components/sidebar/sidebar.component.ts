@@ -1,10 +1,9 @@
-import { Component, effect, inject, signal } from '@angular/core';
+import { Component, inject, OnInit, Signal } from '@angular/core';
 import { AddGuildButtonComponent } from '../buttons/add-guild-button/add-guild-button.component';
 import { GuildButtonComponent } from '../buttons/guild-button/guild-button.component';
-import { GuildSummeryEntry } from '../../classes/guild';
+import { GuildData } from '../../classes/guild';
 import { CommonModule } from '@angular/common';
-import { GuildService } from '../../services/guild.service';
-import { SidebarDataService } from '../../services/data-services/sidebar-data.service';
+import { GuildCacheService } from '../../services/cache/guild-cache.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -12,26 +11,14 @@ import { SidebarDataService } from '../../services/data-services/sidebar-data.se
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.css'
 })
-export class SidebarComponent {
+export class SidebarComponent implements OnInit {
 
-  private guildService = inject(GuildService)
-  private sideBarDataService = inject(SidebarDataService)
-  guilds = signal<GuildSummeryEntry[]>([])
+  private guildCache = inject(GuildCacheService)
+  public guilds: Signal<GuildData>[] = [];
 
-  constructor() {
-    this.refreshGuilds()
-
-    effect(() => {
-      this.sideBarDataService.refreshGuildButtonsEvent()
-      this.refreshGuilds()
-    })
+  async ngOnInit() {
+    const cache = await this.guildCache.getCache()
+    this.guilds = cache.getAllSignals()
   }
 
-  refreshGuilds() {
-    this.guildService.getCurrentUsersGuilds().subscribe({
-      next: (response) => {
-        this.guilds.set(response as GuildSummeryEntry[]);
-      }
-    })
-  }
 }

@@ -48,4 +48,15 @@ export class GenericCache<D, T extends ReactiveData<D>,> {
         const currentObject = this.map.get(id)
         return currentObject != undefined
     }
+
+    public getAllSignals(): Signal<D>[] {
+
+        const out: Signal<D>[] = []
+
+        for (const entry of this.map.entries()) {
+            out.push(entry[1].getData())
+        }
+
+        return out
+    }
 }
